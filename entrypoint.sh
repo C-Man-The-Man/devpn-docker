@@ -11,6 +11,13 @@ mkdir -p "${CONFIG_DIR}"
 
 echo "[INFO] Starting DeVPN container"
 
+if [ -z "${DEVPN_TOKEN}" ]; then
+    echo "[ERROR] DEVPN_TOKEN environment variable not set"
+    echo "[ERROR] Start the container with:"
+    echo "         -e DEVPN_TOKEN=YOUR_TOKEN"
+    exit 1
+fi
+
 if [ ! -f "${ENV_FILE}" ]; then
     cat > "${ENV_FILE}" <<EOF
 DIY_TOKEN=${DEVPN_TOKEN}
@@ -30,7 +37,8 @@ if [ "${FIRST_RUN}" = "true" ]; then
     echo "[INFO] First run detected"
     echo "[INFO] Running official installer"
 
-    curl -sSL https://api.devpn.org/static/install-provider.sh | bash
+    curl -sSL https://api.devpn.org/static/install-provider.sh | \
+    bash -s -- --token "${DEVPN_TOKEN}"
 
     if [ -f "${CONFIG_FILE}" ]; then
 
