@@ -1,0 +1,17 @@
+services:
+  devpn-docker:
+    container_name: devpn-docker
+
+    image: ghcr.io/c-man-the-man/devpn-docker:latest
+
+    restart: unless-stopped
+
+    privileged: true
+
+    network_mode: host
+
+    environment:
+      DEVPN_TOKEN: YOUR_TOKEN_HERE
+
+    volumes:
+      - ./devpn-data:/opt/devpn
