@@ -14,7 +14,6 @@ workflow_dispatch:
 jobs:
 docker:
 
-```
 runs-on: ubuntu-latest
 
 permissions:
@@ -47,5 +46,4 @@ steps:
       platforms: linux/amd64,linux/arm64
       tags: |
         ghcr.io/c-man-the-man/devpn-docker:latest
-```
 
