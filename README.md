@@ -12,7 +12,7 @@ DeVpn currently focuses primarily on bare-metal deployments.
 
 This repository provides a Docker-native deployment option with persistent storage, reproducible builds, and transparent source code while remaining compatible with the official DeVpn infrastructure.
 
-The goal is not to replace the official project, but to offer an alternative deployment method for users who prefer containerized environments, or who simply can't use the official bare-metal install because of software limitations (e.g. [CrankkOS](https://crankk.io/downloads) on Bobcat Miner 300, Linxdot RK3566, Nebra RockPi etc.).
+The goal is not to replace the official project, but to offer an alternative deployment method for users who prefer containerized environments.
 
 ### Features
 
@@ -55,6 +55,7 @@ Users can inspect, modify, and build the image themselves if desired.
 
 * Docker
 * Docker Compose
+* WireGuard support
 * Valid DeVpn DIY token
 
 ---
