@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
     iptables \
     procps \
     ca-certificates \
+    socat \
     miniupnpc \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
