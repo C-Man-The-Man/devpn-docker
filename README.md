@@ -12,7 +12,7 @@ DeVpn currently focuses primarily on bare-metal deployments.
 
 This repository provides a Docker-native deployment option with persistent storage, reproducible builds, and transparent source code while remaining compatible with the official DeVpn infrastructure.
 
-The goal is not to replace the official project, but to offer an alternative deployment method for users who prefer containerized environments.
+The goal is not to replace the official project, but to offer an alternative deployment method for users who prefer containerized environments or cannot use the official bare-metal installer due to platform limitations.
 
 ### Features
 
@@ -21,23 +21,37 @@ The goal is not to replace the official project, but to offer an alternative dep
 * Automatic container restart
 * Source-available build process
 * GitHub Container Registry image distribution
-* Supports ARM64, AMD64 and other Docker-supported Linux platforms
+* Supports ARM64, AMD64, and other Docker-supported Linux platforms
+* Migration path from existing DeVpn installations
+* Multi-architecture container images
 
 ### Referral Link
 
-If you do not already have a DeVPN account, you may use the following referral link:
+If you do not already have a DeVpn account, you may use the following referral link:
 
 https://devpn.org/signup?ref=LWfOwJEQFVQ
 
-**Attention!!!**
+### Obtaining a DIY Token
 
-After the registration process, a web page displays the command line for bare-metal install, as follows:
+After creating a DeVpn account and accessing the Provider Dashboard, use the **Add DIY Node** button to generate a DIY installation token.
+
+The dashboard will display a command similar to:
 
 ```bash
-curl -sSL https://api.devpn.org/static/install-provider.sh | sudo bash -s -- --token XXXXXXXXXXXXXXXXXXXXXX
+curl -sSL https://api.devpn.org/static/install-provider.sh | sudo bash -s -- --token XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
 
-make sure to save your DIY token (43 characters long), there's no other way to recover the token from the DeVpn Dashboard at the time of pushing this repository.
+The value after `--token` is your DIY token.
+
+Example:
+
+```text
+fN16gBKryTjHd2nE-4lPueuQyTwE2ZupqECxmdmAp4Y
+```
+
+For additional nodes, it is recommended to generate a new DIY token from the dashboard for each deployment.
+
+This Docker project only requires the token itself.
 
 ### Repository Contents
 
@@ -54,9 +68,24 @@ Users can inspect, modify, and build the image themselves if desired.
 ### Requirements
 
 * Docker
-* Docker Compose
-* WireGuard support
+* Docker Compose (optional)
+* Host system with WireGuard support
 * Valid DeVpn DIY token
+
+### Important Note
+
+The host operating system must provide WireGuard kernel support.
+
+Systems that do not include WireGuard support may successfully:
+
+* Pull the image
+* Start the container
+* Register a DeVpn node
+* Communicate with the DeVpn API
+
+but will be unable to establish VPN tunnels and therefore cannot function as a provider node.
+
+Examples include embedded Linux distributions such as CrankkOS running on devices like Bobcat Miner 300, Linxdot RK3566, Nebra RockPi, Browan MerryIOT, Panther X2, and similar hardware. (tested on Bobcat Miner 300, Linxdot RK3566 and Browan MerryIOT/Panther X2)
 
 ---
 
@@ -79,6 +108,12 @@ View logs:
 
 ```bash
 docker logs -f devpn-docker
+```
+
+Verify:
+
+```bash
+docker ps
 ```
 
 ---
@@ -110,7 +145,7 @@ Replace:
 DEVPN_TOKEN: YOUR_TOKEN_HERE
 ```
 
-with your DeVpn DIY token.
+with your DIY token.
 
 Start the container:
 
@@ -154,7 +189,7 @@ sudo cp /opt/devpn/config.json ~/devpn-backup/
 sudo cp /opt/devpn/.env ~/devpn-backup/
 ```
 
-### Step 3 - Save Agent Token
+### Step 3 - Verify Existing Identity
 
 Open:
 
@@ -162,13 +197,16 @@ Open:
 sudo cat /opt/devpn/config.json
 ```
 
-Locate:
+Confirm the file contains your existing:
 
 ```json
-"agent_token": "xxxxxxxxxxxxxxxx"
+{
+  "provider_id": "...",
+  "agent_token": "..."
+}
 ```
 
-Save this value.
+These values identify your existing node.
 
 ### Step 4 - Deploy Docker Version
 
@@ -200,7 +238,7 @@ Verify:
 cat ./devpn-data/.env
 ```
 
-Ensure it contains:
+Expected format:
 
 ```text
 DIY_TOKEN=
@@ -220,25 +258,35 @@ docker compose up -d
 docker compose logs -f
 ```
 
-Confirm that the node appears normally in the DeVpn Dashboard.
+Confirm the node starts normally and appears in the DeVpn Dashboard with the same identity.
 
 ---
 
 ## Data Persistence
 
-All persistent data is stored inside:
+All persistent node data is stored inside:
 
 ```text
 ./devpn-data
 ```
 
-Back up this directory before major migrations or system changes.
+for Docker Compose deployments, or inside the Docker volume:
+
+```text
+devpn-data
+```
+
+for Quick Setup deployments.
+
+Back up this data before major migrations, operating system changes, or hardware replacements.
 
 ---
 
 ## Disclaimer
 
 This repository is an independent Docker packaging project.
+
+It is not affiliated with, endorsed by, or maintained by the official DeVpn team.
 
 Users are responsible for reviewing the source code, understanding the software they run, and complying with all applicable laws, regulations, and service provider requirements.
 
