@@ -290,3 +290,28 @@ It is not affiliated with, endorsed by, or maintained by the official DeVpn team
 
 Users are responsible for reviewing the source code, understanding the software they run, and complying with all applicable laws, regulations, and service provider requirements.
 
+---
+
+## Donations
+
+Bitcoin wallet address
+```text
+bc1qpcfex53u7mqx4dc25gw7j7446amw9vn6743cn5
+```
+
+EVM / Metamask (ETH, ETC, OCTA, POL, PEAQ, MONAD, BASE etc.)
+```text
+0xbE4879888d95B02B2FCaed2FcAeBbcf36829BDC9
+```
+
+Solana wallet address
+```text
+7EHWvShXfjLJ2HhzTf4CsHgjKckivfMQMjnEoUAEqau
+```
+
+Sui wallet address
+```text
+0x421a5a462f99c2d675d035d0c741ba5765a47c1e28f95d33ad770cd34a36a6ea
+```
+
+Thank you!
