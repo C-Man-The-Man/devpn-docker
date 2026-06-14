@@ -87,11 +87,19 @@ but will be unable to establish VPN tunnels and therefore cannot function as a p
 
 Examples include embedded Linux distributions such as CrankkOS running on devices like Bobcat Miner 300, Linxdot RK3566, Nebra RockPi, Browan MerryIOT, Panther X2, and similar hardware. (tested on Bobcat Miner 300, Linxdot RK3566 and Browan MerryIOT/Panther X2)
 
+### Successfully Tested Platforms
+
+- Raspberry Pi OS (64-bit)
+- Debian-based Linux distributions
+- Ubuntu
+- CrankkIMG
+- UmbrelOS (using Portainer)
+
 ---
 
 ## Quick Setup
 
-Run a DeVpn node using a single command:
+Run a DeVpn node using the command:
 
 ```bash
 docker run -d \
@@ -104,6 +112,12 @@ docker run -d \
   ghcr.io/c-man-the-man/devpn-docker:latest
 ```
 
+or as a single line command (useful on embedded Linux systems, mobile SSH clients, and environments where line continuation characters may not behave as expected):
+
+```bash
+docker run -d --name devpn-docker --restart unless-stopped --privileged --network host -e DEVPN_TOKEN=YOUR_TOKEN_HERE -v devpn-data:/opt/devpn ghcr.io/c-man-the-man/devpn-docker:latest
+```
+
 View logs:
 
 ```bash
@@ -114,6 +128,27 @@ Verify:
 
 ```bash
 docker ps
+```
+
+### Uninstall
+
+Stop and remove the container:
+
+```bash
+docker stop devpn-docker
+docker rm devpn-docker
+```
+
+Remove persistent node data:
+
+```bash
+docker volume rm devpn-data
+```
+
+Remove the image:
+
+```bash
+docker rmi ghcr.io/c-man-the-man/devpn-docker:latest
 ```
 
 ---
@@ -165,6 +200,33 @@ Verify:
 docker ps
 ```
 
+### Uninstall
+
+Stop and remove the container:
+
+```bash
+docker compose down
+```
+
+Remove persistent data:
+
+```bash
+rm -rf devpn-data
+```
+
+Remove the image:
+
+```bash
+docker rmi ghcr.io/c-man-the-man/devpn-docker:latest
+```
+
+Remove the repository directory:
+
+```bash
+cd ..
+rm -rf devpn-docker
+```
+
 ---
 
 ## Migration From Existing Installations
@@ -208,7 +270,33 @@ Confirm the file contains your existing:
 
 These values identify your existing node.
 
-### Step 4 - Deploy Docker Version
+### Step 4A - Migrate Using Quick Setup
+
+Create a Docker volume:
+
+```bash
+docker volume create devpn-data
+```
+
+Copy the existing files into the volume:
+
+```bash
+docker run --rm \
+  -v devpn-data:/target \
+  -v ~/devpn-backup:/source \
+  alpine \
+  sh -c "cp /source/config.json /target/ && cp /source/.env /target/"
+```
+
+or, one line command:
+
+```bash
+docker run --rm -v devpn-data:/target -v ~/devpn-backup:/source alpine sh -c "cp /source/config.json /target/ && cp /source/.env /target/"
+```
+
+Start the container using the Quick Setup command from the Quick Setup section above.
+
+### Step 4B - Migrate Using Docker Compose
 
 ```bash
 mkdir devpn-docker
@@ -246,13 +334,13 @@ AGENT_TOKEN=
 PROVIDER_ID=
 ```
 
-### Step 5 - Start Container
+Start Container
 
 ```bash
 docker compose up -d
 ```
 
-### Step 6 - Verify
+### Step 5 - Verify
 
 ```bash
 docker compose logs -f
