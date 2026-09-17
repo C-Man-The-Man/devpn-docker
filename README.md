@@ -108,7 +108,7 @@ docker run -d \
   --privileged \
   --network host \
   -e DEVPN_TOKEN=YOUR_TOKEN_HERE \
-  -v devpn-data:/opt/devpn \
+  -v "$(pwd)/devpn-data:/opt/devpn" \
   ghcr.io/c-man-the-man/devpn-docker:latest
 ```
 
