@@ -115,7 +115,7 @@ docker run -d \
 or as a single line command (useful on embedded Linux systems, mobile SSH clients, and environments where line continuation characters may not behave as expected):
 
 ```bash
-docker run -d --name devpn-docker --restart unless-stopped --privileged --network host -e DEVPN_TOKEN=YOUR_TOKEN_HERE -v devpn-data:/opt/devpn ghcr.io/c-man-the-man/devpn-docker:latest
+docker run -d --name devpn-docker --restart unless-stopped --privileged --network host -e DEVPN_TOKEN=YOUR_TOKEN_HERE -v "$(pwd)/devpn-data:/opt/devpn" ghcr.io/c-man-the-man/devpn-docker:latest
 ```
 
 View logs:
@@ -142,7 +142,7 @@ docker rm devpn-docker
 Remove persistent node data:
 
 ```bash
-docker volume rm devpn-data
+rm -rf /devpn-data:/opt/devpn
 ```
 
 Remove the image:
