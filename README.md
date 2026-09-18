@@ -142,7 +142,7 @@ docker rm devpn-docker
 Remove persistent node data:
 
 ```bash
-rm -rf /devpn-data:/opt/devpn
+rm -rf devpn-data
 ```
 
 Remove the image:
@@ -272,61 +272,72 @@ These values identify your existing node.
 
 ### Step 4A - Migrate Using Quick Setup
 
-Create a Docker volume:
+- Create a persistent storage directory:
 
 ```bash
-docker volume create devpn-data
+mkdir -p devpn-data
 ```
 
-Copy the existing files into the volume:
+- Copy the backup files:
 
 ```bash
-docker run --rm \
-  -v devpn-data:/target \
-  -v ~/devpn-backup:/source \
-  alpine \
-  sh -c "cp /source/config.json /target/ && cp /source/.env /target/"
+cp ~/devpn-backup/config.json ./devpn-data/
+```
+```bash
+cp ~/devpn-backup/.env ./devpn-data/
 ```
 
-or, one line command:
+- Verify:
 
 ```bash
-docker run --rm -v devpn-data:/target -v ~/devpn-backup:/source alpine sh -c "cp /source/config.json /target/ && cp /source/.env /target/"
+cat ./devpn-data/.env
 ```
 
-Start the container using the Quick Setup command from the Quick Setup section above.
+- Expected format:
+
+```bash
+DIY_TOKEN=
+AGENT_TOKEN=
+PROVIDER_ID=
+```
+
+- Start the container using the Quick Setup command from the Quick Setup section above.
 
 ### Step 4B - Migrate Using Docker Compose
+
+- Create a working directory and navigate to it:
 
 ```bash
 mkdir devpn-docker
 cd devpn-docker
 ```
 
+- Clone the `devpn-docker` image:
+
 ```bash
 git clone https://github.com/C-Man-The-Man/devpn-docker .
 ```
 
-Create the persistent storage directory:
+- Create the persistent storage directory:
 
 ```bash
 mkdir -p devpn-data
 ```
 
-Copy the backup files:
+- Copy the backup files:
 
 ```bash
 cp ~/devpn-backup/config.json ./devpn-data/
 cp ~/devpn-backup/.env ./devpn-data/
 ```
 
-Verify:
+- Verify:
 
 ```bash
 cat ./devpn-data/.env
 ```
 
-Expected format:
+- Expected format:
 
 ```text
 DIY_TOKEN=
@@ -334,7 +345,7 @@ AGENT_TOKEN=
 PROVIDER_ID=
 ```
 
-Start Container
+- Start Container
 
 ```bash
 docker compose up -d
@@ -358,13 +369,7 @@ All persistent node data is stored inside:
 ./devpn-data
 ```
 
-for Docker Compose deployments, or inside the Docker volume:
-
-```text
-devpn-data
-```
-
-for Quick Setup deployments.
+for both `docker run` (Quick Setup) or `docker compose` versions.
 
 Back up this data before major migrations, operating system changes, or hardware replacements.
 
